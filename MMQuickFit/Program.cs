@@ -6,16 +6,18 @@ namespace MMQuickFit
 {
     class Program
     {
-        public const long MemorySize = (4 * (2 ^ 10) * 8); //32768 bits
-        public const long FrameSize = (1 * (2 ^ 10) * 8); //8192 bits        
+        public static long MemorySize = 4 * Utils.IntPow(2, 10); //4,096 bytes
+        public static long FrameSize = 1 * Utils.IntPow(2, 10); //1024 bytes        
 
         static void Main(string[] args)
         {
             Memory memory = new Memory(MemorySize, FrameSize);
 
-            String location = System.IO.Directory.GetCurrentDirectory();
-            String buffer = Utils.ReadInputFile("../../../Inputs/data.csv");
-            List<Process> processesList = Utils.CsvToProcessList(buffer);
+            String Buffer = Utils.ReadInputFile("../../../Inputs/data.csv");
+            List<Process> processesList = Utils.CsvToProcessList(Buffer);
+
+            memory.InitializeMemory(processesList);
+            memory.PrintMemory();
 
             Console.ReadKey();
 
