@@ -6,7 +6,7 @@ namespace MMQuickFit
 {
     class Program
     {
-        public static long MemorySize = 32 * Utils.IntPow(2, 10); //4,096 bytes
+        public static long MemorySize = 10 * Utils.IntPow(2, 10); //4,096 bytes
         public static long FrameSize = 1 * Utils.IntPow(2, 10); //1024 bytes        
 
         static void Main(string[] args)

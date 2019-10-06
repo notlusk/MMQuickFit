@@ -85,13 +85,16 @@ namespace MMQuickFit.src
         }
 
         public void PrintMemory() {
+            List<Frame> listToPrint = this.Frames;
+            listToPrint.Reverse();
+
             Console.WriteLine("--------------MEMORY-------------------\n");
-            foreach (var frame in this.Frames)
+            foreach (var frame in listToPrint)
             {
                 if(frame.Process != null)
-                    Console.WriteLine(String.Format("{1} - {0}", frame.Process.Name, frame.RegB));
+                    Console.WriteLine(String.Format("{1} - {2} => {0}", frame.Process.Name, frame.RegB, frame.RegB + Program.FrameSize));
                 else
-                    Console.WriteLine(String.Format("{1} - {0}", "---", frame.RegB));
+                    Console.WriteLine(String.Format("{1} - {2} => {0}", "---", frame.RegB, frame.RegB + Program.FrameSize));
             }
             Console.WriteLine("\n---------------------------------------\n\n\n");
         }
