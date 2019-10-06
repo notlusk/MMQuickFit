@@ -39,17 +39,44 @@ namespace MMQuickFit.src
             }
 
             for (int i = 0; i < FramesQTD; i++)
-            {               
+            {
                 long memoryframeLocation = (i * Utils.IntPow(2, 10));
 
-                Frame frameToInsert = new Frame(memoryframeLocation);
-
                 if (mapProcess.ContainsKey(memoryframeLocation))
-                    frameToInsert.Process = mapProcess[memoryframeLocation];
+                {
+                    Process processToInsertMemory = mapProcess[memoryframeLocation];
+
+                    if (processToInsertMemory.RegL > Program.FrameSize)
+                    {
+                        decimal framesNeeded = Math.Ceiling((decimal) processToInsertMemory.RegL / Program.FrameSize);
+
+                        for (int i2 = 0; i2 < framesNeeded; i2++)
+                        {
+                            memoryframeLocation = (i * Utils.IntPow(2, 10));
+
+                            Frame frameToInsert = new Frame(memoryframeLocation);
+                            frameToInsert.Process = processToInsertMemory;
+
+                            this.Frames.Add(frameToInsert);
+
+                            i++;
+                        }
+                    }
+                    else
+                    {
+                        Frame frameToInsert = new Frame(memoryframeLocation);
+                        frameToInsert.Process = processToInsertMemory;
+
+                        this.Frames.Add(frameToInsert);
+                    }
+                }
                 else
+                {
+                    Frame frameToInsert = new Frame(memoryframeLocation);
                     frameToInsert.Process = null;
 
-                this.Frames.Add(frameToInsert);
+                    this.Frames.Add(frameToInsert);
+                }                
             }
         }
 
