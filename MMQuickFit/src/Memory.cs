@@ -38,7 +38,9 @@ namespace MMQuickFit.src
                 mapProcess.Add(forProcess.RegB, forProcess);
             }
 
-            for (int i = 0; i < FramesQTD; i++)
+            int i = 0;
+
+            while(i < FramesQTD)
             {
                 long memoryframeLocation = (i * Utils.IntPow(2, 10));
 
@@ -68,6 +70,7 @@ namespace MMQuickFit.src
                         frameToInsert.Process = processToInsertMemory;
 
                         this.Frames.Add(frameToInsert);
+                        i++;
                     }
                 }
                 else
@@ -76,6 +79,7 @@ namespace MMQuickFit.src
                     frameToInsert.Process = null;
 
                     this.Frames.Add(frameToInsert);
+                    i++;
                 }                
             }
         }
@@ -89,7 +93,7 @@ namespace MMQuickFit.src
                 else
                     Console.WriteLine(String.Format("{1} - {0}", "---", frame.RegB));
             }
-            Console.WriteLine("\n---------------------------------------");
+            Console.WriteLine("\n---------------------------------------\n\n\n");
         }
     }
 }
