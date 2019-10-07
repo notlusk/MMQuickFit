@@ -48,9 +48,9 @@ namespace MMQuickFit.src
                 {
                     Process processToInsertMemory = mapProcess[memoryframeLocation];
 
-                    if (processToInsertMemory.RegL > Program.FrameSize)
+                    if (processToInsertMemory.RegL > this.FrameSize)
                     {
-                        decimal framesNeeded = Math.Ceiling((decimal) processToInsertMemory.RegL / Program.FrameSize);
+                        decimal framesNeeded = Math.Ceiling((decimal) processToInsertMemory.RegL / this.FrameSize);
 
                         for (int i2 = 0; i2 < framesNeeded; i2++)
                         {
@@ -92,9 +92,9 @@ namespace MMQuickFit.src
             foreach (var frame in listToPrint)
             {
                 if(frame.Process != null)
-                    Console.WriteLine(String.Format("{1} - {2} => {0}", frame.Process.Name, frame.RegB, frame.RegB + Program.FrameSize));
+                    Console.WriteLine(String.Format("{1} - {2} => {0}", frame.Process.Name, frame.RegB, frame.RegB + this.FrameSize));
                 else
-                    Console.WriteLine(String.Format("{1} - {2} => {0}", "---", frame.RegB, frame.RegB + Program.FrameSize));
+                    Console.WriteLine(String.Format("{1} - {2} => {0}", "---", frame.RegB, frame.RegB + this.FrameSize));
             }
             Console.WriteLine("\n---------------------------------------\n\n\n");
         }
