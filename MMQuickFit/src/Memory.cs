@@ -83,6 +83,25 @@ namespace MMQuickFit.src
                 }                
             }
         }
+        
+        /*public void insertProcess(int index, Process process)
+        {           
+            Frame frame = this.Frames[index];
+            
+            try
+            {
+                if(frame.Process != null)
+                    throw new Exception("Não é possível inserir o processo, pois esse local da mémoria já está sendo utilizado!");
+                else
+                {
+                    frame.Process = process;
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.getMessage());
+            }
+        }*/
 
         public void PrintMemory() {
             List<Frame> listToPrint = this.Frames;
