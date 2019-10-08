@@ -86,8 +86,8 @@ namespace MMQuickFit.src
         
         /*public void insertProcess(int index, Process process)
         {           
-            Frame frame = this.Frames[index];
             int framesNeeded = process.RegL / this.FramesSize;
+            Frame frame;
             
             try
             {
@@ -96,7 +96,14 @@ namespace MMQuickFit.src
                 else
                 {
                     if(framesNeeded == 1)
-                        frame.Process = process;
+                    {
+                        frame = this.Frames[index];
+                    
+                        if(frame.Process == null)
+                            frame.Process = process;
+                        else
+                            throw new Exception("Não é possível inserir o processo, pois esse local da mémoria já está sendo utilizado!");
+                    }                        
                     else
                     {
                         for(int i = 0; i < framesNeeded; i++)
