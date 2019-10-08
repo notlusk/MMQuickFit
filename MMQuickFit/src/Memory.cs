@@ -118,8 +118,9 @@ namespace MMQuickFit.src
             }
         }*/
         
-        /*public void FirstFitInsertion(Process pProcess){
+        /*public int FirstFitInsertion(Process pProcess){
             int framesNeeded = pProcess.RegL / this.FramesSize;
+            int indexToReturn;
             
             for(int i = this.Frames.Count; i > 0; --i){
                 int k = i;
