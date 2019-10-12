@@ -19,6 +19,13 @@ namespace MMQuickFit
             memory.InitializeMemory(processesList);
             memory.PrintMemory();
 
+            Console.WriteLine();
+
+            /*Process process1 = new Process("D", FrameSize * 2, 1024);
+
+            memory.insertProcess(2 ,process1);
+            memory.PrintMemory();*/
+
             Console.ReadKey();
 
             //File.WriteAllText(@outputPath, outputText);

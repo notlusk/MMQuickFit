@@ -48,9 +48,9 @@ namespace MMQuickFit.src
                 {
                     Process processToInsertMemory = mapProcess[memoryframeLocation];
 
-                    if (processToInsertMemory.RegL > this.FrameSize)
+                    if (processToInsertMemory.RegL > this.FramesSize)
                     {
-                        decimal framesNeeded = Math.Ceiling((decimal) processToInsertMemory.RegL / this.FrameSize);
+                        decimal framesNeeded = Math.Ceiling((decimal) processToInsertMemory.RegL / this.FramesSize);
 
                         for (int i2 = 0; i2 < framesNeeded; i2++)
                         {
@@ -84,14 +84,14 @@ namespace MMQuickFit.src
             }
         }
         
-        /*public void insertProcess(int index, Process process)
+        public void insertProcess(int index, Process process)
         {           
-            int framesNeeded = process.RegL / this.FramesSize;
+            long framesNeeded =  process.RegL / this.FramesSize;
             Frame frame;
             
             try
             {
-                if(frame.Process != null)
+                if(this.Frames[index].Process != null)
                     throw new Exception("Não é possível inserir o processo, pois esse local da mémoria já está sendo utilizado!");
                 else
                 {
@@ -121,9 +121,9 @@ namespace MMQuickFit.src
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex.getMessage());
+                Console.WriteLine(ex.Message);
             }
-        }*/
+        }
         
         /*public int FirstFitInsertion(Process pProcess){
             int framesNeeded = pProcess.RegL / this.FramesSize;
@@ -152,9 +152,9 @@ namespace MMQuickFit.src
             foreach (var frame in listToPrint)
             {
                 if(frame.Process != null)
-                    Console.WriteLine(String.Format("{1} - {2} => {0}", frame.Process.Name, frame.RegB, frame.RegB + this.FrameSize));
+                    Console.WriteLine(String.Format("{1} - {2} => {0}", frame.Process.Name, frame.RegB, frame.RegB + this.FramesSize));
                 else
-                    Console.WriteLine(String.Format("{1} - {2} => {0}", "---", frame.RegB, frame.RegB + this.FrameSize));
+                    Console.WriteLine(String.Format("{1} - {2} => {0}", "---", frame.RegB, frame.RegB + this.FramesSize));
             }
             Console.WriteLine("\n---------------------------------------\n\n\n");
         }
