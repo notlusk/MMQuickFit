@@ -21,10 +21,18 @@ namespace MMQuickFit
 
             Console.WriteLine();
 
-            /*Process process1 = new Process("D", FrameSize * 2, 1024);
+            var listProcess = new List<Process>();
 
-            memory.insertProcess(2 ,process1);
-            memory.PrintMemory();*/
+            listProcess.Add(new Process("D", FrameSize * 2, 1024));
+            listProcess.Add(new Process("E", FrameSize * 2, 100));
+            listProcess.Add(new Process("F", FrameSize * 2, 2024));
+            foreach (var item in listProcess)
+            {
+                //memory.InsertProcess(memory.FirstFitInsertion(item), item);
+                //memory.InsertProcess(memory.BestFitInsertion(item), item);
+                memory.InsertProcess(memory.WorstFitInsertion(item), item);
+            }
+            memory.PrintMemory();
 
             Console.ReadKey();
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace MMQuickFit.src
@@ -84,9 +85,10 @@ namespace MMQuickFit.src
             }
         }
         
-        public void insertProcess(int index, Process process)
-        {           
-            long framesNeeded =  process.RegL / this.FramesSize;
+        public void InsertProcess(int index, Process process)
+        {
+            var framesNeeded = process.RegL / this.FramesSize;
+            framesNeeded = process.RegL % this.FramesSize > 0 ? framesNeeded + 1 : framesNeeded;
             Frame frame;
             
             try
@@ -98,7 +100,7 @@ namespace MMQuickFit.src
                     if(framesNeeded == 1)
                     {
                         frame = this.Frames[index];
-                    
+                        process.RegB = frame.RegB;
                         if(frame.Process == null)
                             frame.Process = process;
                         else
@@ -108,11 +110,12 @@ namespace MMQuickFit.src
                     {
                         for(int i = 0; i < framesNeeded; i++)
                         {
-                            if(this.Frames[index + i].Process != null)
+                            if (this.Frames[index + i].Process != null)
                                 throw new Exception("Não é possível inserir o processo, pois esse local da mémoria já está sendo utilizado!");
                             else
                             {
                                 frame = this.Frames[index + i];
+                                process.RegB = frame.RegB;
                                 frame.Process = process;
                             }
                         }
@@ -124,29 +127,91 @@ namespace MMQuickFit.src
                 Console.WriteLine(ex.Message);
             }
         }
-        
-        /*public int FirstFitInsertion(Process pProcess){
-            int framesNeeded = pProcess.RegL / this.FramesSize;
-            int indexToReturn;
-            
-            for(int i = this.Frames.Count; i > 0; --i){
-                int k = i;
-                int frames
-                
-                while(){
-                    if(this.Frames[k].Process != null)
-                        
-                       
-                    k++;
-                }       
-                
-                if()
+
+        public int FirstFitInsertion(Process pProcess)
+        {
+            var framesNeeded = pProcess.RegL / this.FramesSize;
+            framesNeeded = pProcess.RegL % this.FramesSize > 0 ? framesNeeded + 1 : framesNeeded;
+
+            int indexToReturn = 0, auxIndex = 0;
+
+            for (int i = 0; i < this.Frames.Count; ++i)
+            {
+                if (this.Frames[i].Process != null)
+                    indexToReturn = 0;
+                else
+                {
+                    if (indexToReturn == 0)
+                        auxIndex = i;
+                    indexToReturn++;
+                }
+                if (indexToReturn == framesNeeded)
+                    return auxIndex;
             }
-        }*/
+            return -1;
+        }
+
+        public int BestFitInsertion(Process pProcess)
+        {
+            var framesNeeded = pProcess.RegL / this.FramesSize;
+            framesNeeded = pProcess.RegL % this.FramesSize > 0 ? framesNeeded + 1 : framesNeeded;
+
+            Dictionary<int, int> mapEmptyFrames = new Dictionary<int, int>();
+            int emptyFrames = 0, auxIndex = 0;
+
+            for (int i = 0; i < this.Frames.Count; ++i)
+            { 
+                if (this.Frames[i].Process != null)
+                    emptyFrames = 0;
+                else
+                {
+                    if (emptyFrames == 0)
+                        auxIndex = i;
+                    emptyFrames++;
+                }
+                if ((i == this.Frames.Count - 1 || this.Frames[i + 1].Process != null) && emptyFrames > 0)
+                    mapEmptyFrames.Add(auxIndex, emptyFrames);
+            }
+
+            if (mapEmptyFrames.Count == 0)
+                return -1;
+
+            var bestFit = mapEmptyFrames.Where(w=>w.Value >= framesNeeded).OrderBy(o => o.Value).FirstOrDefault();
+            return bestFit.Key;
+        }
+
+        public int WorstFitInsertion(Process pProcess)
+        {
+            var framesNeeded = pProcess.RegL / this.FramesSize;
+            framesNeeded = pProcess.RegL % this.FramesSize > 0 ? framesNeeded + 1 : framesNeeded;
+
+            Dictionary<int, int> mapEmptyFrames = new Dictionary<int, int>();
+            int emptyFrames = 0, auxIndex = 0;
+
+            for (int i = 0; i < this.Frames.Count; ++i)
+            {
+                if (this.Frames[i].Process != null)
+                    emptyFrames = 0;
+                else
+                {
+                    if (emptyFrames == 0)
+                        auxIndex = i;
+                    emptyFrames++;
+                }
+                if ((i == this.Frames.Count - 1 || this.Frames[i + 1].Process != null) && emptyFrames > 0)
+                    mapEmptyFrames.Add(auxIndex, emptyFrames);
+            }
+
+            if (mapEmptyFrames.Count == 0)
+                return -1;
+
+            var worstFit = mapEmptyFrames.Where(w => w.Value >= framesNeeded).OrderByDescending(o => o.Value).FirstOrDefault();
+            return worstFit.Key;
+        }
 
         public void PrintMemory() {
             List<Frame> listToPrint = this.Frames;
-            listToPrint.Reverse();
+            //listToPrint.Reverse();
 
             Console.WriteLine("--------------MEMORY-------------------\n");
             foreach (var frame in listToPrint)
