@@ -4,39 +4,72 @@ using System.Collections.Generic;
 
 namespace MMQuickFit
 {
-    class Program
+    public class Program
     {
-        public static long MemorySize = 10 * Utils.IntPow(2, 10);
-        public static long FrameSize = 1 * Utils.IntPow(2, 10);        
-
-        static void Main(string[] args)
+       
+        public static void Main(string[] args)
         {
-            Memory memory = new Memory(MemorySize, FrameSize);
+            var orignalMemory = new Memory();
 
-            String Buffer = Utils.ReadInputFile("../../../Inputs/data.csv");
-            List<Process> processesList = Utils.CsvToProcessList(Buffer);
-
-            memory.InitializeMemory(processesList);
-            memory.PrintMemory();
+            orignalMemory.PrintMemory();
 
             Console.WriteLine();
 
             var listProcess = new List<Process>();
 
-            listProcess.Add(new Process("D", FrameSize * 2, 1024));
-            listProcess.Add(new Process("E", FrameSize * 2, 100));
-            listProcess.Add(new Process("F", FrameSize * 2, 2024));
-            foreach (var item in listProcess)
+            listProcess.Add(new Process("D", -1, 1024));
+            listProcess.Add(new Process("E", -1, 100));
+            listProcess.Add(new Process("F", -1, 2024));
+
+            FirstFit(listProcess);
+            BestFit(listProcess);
+            WorstFit(listProcess);
+
+            Console.WriteLine("Done!");
+        }
+        
+        public static void FirstFit(List<Process> processList)
+        {
+            var firstFitMemory = new Memory(); 
+            foreach (var process in processList)
             {
-                //memory.InsertProcess(memory.FirstFitInsertion(item), item);
-                //memory.InsertProcess(memory.BestFitInsertion(item), item);
-                memory.InsertProcess(memory.WorstFitInsertion(item), item);
+                firstFitMemory.InsertProcess(firstFitMemory.FirstFitInsertion(process), process);
             }
-            memory.PrintMemory();
 
-            Console.ReadKey();
+            Console.WriteLine("--------------FIRST FIT----------------\n");
+            firstFitMemory.PrintMemory();
 
-            //File.WriteAllText(@outputPath, outputText);
+            Utils.ProcessListToCsv(firstFitMemory.Frames, "../../../Outputs/firstFitData.csv");
+        }
+
+        public static void BestFit(List<Process> processList)
+        {
+            Memory bestFitMemory = new Memory();
+
+            foreach (var process in processList)
+            {
+                bestFitMemory.InsertProcess(bestFitMemory.BestFitInsertion(process), process);
+            }
+
+            Console.WriteLine("---------------BEST FIT----------------\n");
+            bestFitMemory.PrintMemory();
+
+            Utils.ProcessListToCsv(bestFitMemory.Frames, "../../../Outputs/bestFitData.csv");
+        }
+
+        public static void WorstFit(List<Process> processList)
+        {
+            Memory worstFitMemory = new Memory();
+
+            foreach (var process in processList)
+            {
+                worstFitMemory.InsertProcess(worstFitMemory.WorstFitInsertion(process), process);
+            }
+
+            Console.WriteLine("--------------WORST FIT----------------\n");
+            worstFitMemory.PrintMemory();
+
+            Utils.ProcessListToCsv(worstFitMemory.Frames, "../../../Outputs/worstFitData.csv");
         }
     }
 }

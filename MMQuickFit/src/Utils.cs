@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace MMQuickFit.src
@@ -42,6 +43,24 @@ namespace MMQuickFit.src
 
             return processListToReturn;
         }
+
+        public static void ProcessListToCsv(List<Frame> framesList, string outputPath = "../../../Outputs/outputData.csv")
+        {
+            var line = string.Empty;
+
+            framesList = framesList.Where(w => w.Process != null).ToList();
+
+            if (framesList == null)
+                throw new Exception();
+
+            foreach (var frame in framesList)
+            {
+                var process = frame.Process;
+                line += process.Name + ";" + process.RegB + ";" + process.RegL + "\r\n";
+            }
+            File.WriteAllText(@outputPath, line);
+        }
+
         public static int IntPow(int x, uint pow)
         {
             int ret = 1;

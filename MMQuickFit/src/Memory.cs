@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MMQuickFit.src
 {
-    class Frame {
+    public class Frame {
         public Process Process { get; set; }
 
         public long RegB { get; set; }
@@ -15,14 +15,40 @@ namespace MMQuickFit.src
         }
     }
 
-    class Memory
+    public class Memory
     {
+        public static long MemorySize = 10 * Utils.IntPow(2, 10);
+        public static long FrameSize = 1 * Utils.IntPow(2, 10);
+
+        private Memory GetOriginalMemory 
+        {
+            get
+            {
+                Memory originalMemory = new Memory(MemorySize, FrameSize);
+
+                String Buffer = Utils.ReadInputFile("../../../Inputs/data.csv");
+                List<Process> processesList = Utils.CsvToProcessList(Buffer);
+
+                originalMemory.InitializeMemory(processesList);
+
+                return originalMemory;
+            }
+        }
+
         public long Size { get; set; }
         public long FramesSize { get; set; }
 
         public long FramesQTD { get; set; }
 
         public List<Frame> Frames { get; set; }
+
+        public Memory()
+        {
+            Frames = GetOriginalMemory.Frames;
+            Size = GetOriginalMemory.Size;
+            FramesSize = GetOriginalMemory.FramesSize;
+            FramesQTD = GetOriginalMemory.FramesQTD;
+        }
 
         public Memory(long ms, long fs) {
             Frames = new List<Frame>();
@@ -31,7 +57,7 @@ namespace MMQuickFit.src
             FramesQTD = ms / fs;
         }
 
-        public void InitializeMemory(List<Process> Processes){
+        private void InitializeMemory(List<Process> Processes){
             Dictionary<long, Process> mapProcess = new Dictionary<long, Process>();
 
             foreach (var forProcess in Processes)
@@ -170,10 +196,13 @@ namespace MMQuickFit.src
                     emptyFrames++;
                 }
                 if ((i == this.Frames.Count - 1 || this.Frames[i + 1].Process != null) && emptyFrames > 0)
+                {
                     mapEmptyFrames.Add(auxIndex, emptyFrames);
+                    if (emptyFrames == framesNeeded)
+                        return auxIndex;
+                }
             }
-
-            if (mapEmptyFrames.Count == 0)
+            if (mapEmptyFrames.Count(w => w.Value >= framesNeeded) == 0)
                 return -1;
 
             var bestFit = mapEmptyFrames.Where(w=>w.Value >= framesNeeded).OrderBy(o => o.Value).FirstOrDefault();
@@ -202,7 +231,7 @@ namespace MMQuickFit.src
                     mapEmptyFrames.Add(auxIndex, emptyFrames);
             }
 
-            if (mapEmptyFrames.Count == 0)
+            if (mapEmptyFrames.Count(w => w.Value >= framesNeeded) == 0)
                 return -1;
 
             var worstFit = mapEmptyFrames.Where(w => w.Value >= framesNeeded).OrderByDescending(o => o.Value).FirstOrDefault();
@@ -210,8 +239,9 @@ namespace MMQuickFit.src
         }
 
         public void PrintMemory() {
-            List<Frame> listToPrint = this.Frames;
-            //listToPrint.Reverse();
+            List<Frame> listToPrint = new List<Frame>();
+            listToPrint.AddRange(this.Frames);
+            listToPrint.Reverse();
 
             Console.WriteLine("--------------MEMORY-------------------\n");
             foreach (var frame in listToPrint)
