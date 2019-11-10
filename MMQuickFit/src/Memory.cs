@@ -17,7 +17,7 @@ namespace MMQuickFit.src
 
     public class Memory
     {
-        public static long MemorySize = 10 * Utils.IntPow(2, 10);
+        public static long MemorySize = 25 * Utils.IntPow(2, 10);
         public static long FrameSize = 1 * Utils.IntPow(2, 10);
 
         private Memory GetOriginalMemory 
@@ -28,7 +28,6 @@ namespace MMQuickFit.src
 
                 String Buffer = Utils.ReadInputFile("../../../Inputs/data.csv");
                 List<Process> processesList = Utils.CsvToProcessList(Buffer);
-
                 originalMemory.InitializeMemory(processesList);
 
                 return originalMemory;

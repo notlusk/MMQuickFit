@@ -31,14 +31,16 @@ namespace MMQuickFit.src
             foreach (string line in processFound)
             {
                 var splitData = line.Split(';');
+                if(splitData.Length == 3)
+                {
+                    string name = splitData[0];
+                    int regB = Int32.Parse(splitData[1]);
+                    int regL = Int32.Parse(splitData[2]);
 
-                string name = splitData[0];
-                int regB = Int32.Parse(splitData[1]);
-                int regL = Int32.Parse(splitData[2]);
+                    Process _process = new Process(name, regB, regL);
 
-                Process _process = new Process(name, regB, regL);
-
-                processListToReturn.Add(_process);
+                    processListToReturn.Add(_process);
+                }
             }
 
             return processListToReturn;

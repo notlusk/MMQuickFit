@@ -9,17 +9,23 @@ namespace MMQuickFit
        
         public static void Main(string[] args)
         {
+            var allRegBase = new Dictionary<long, bool>();
+            for (long memorySize = 0; memorySize < Memory.MemorySize; memorySize = memorySize + Memory.FrameSize)
+            {
+                allRegBase.Add(memorySize, false);
+            }
+            Console.WriteLine();
+            var scriptProcessMemory = new ScriptProcess(Memory.MemorySize/4, Memory.FrameSize, allRegBase);
+            scriptProcessMemory.CreateFile("../../../Inputs/data.csv", "M");
             var orignalMemory = new Memory();
 
             orignalMemory.PrintMemory();
 
             Console.WriteLine();
-
-            var listProcess = new List<Process>();
-
-            listProcess.Add(new Process("D", -1, 1024));
-            listProcess.Add(new Process("E", -1, 100));
-            listProcess.Add(new Process("F", -1, 2024));
+            var scriptProcess = new ScriptProcess(orignalMemory.Size/3, orignalMemory.FramesSize);
+            scriptProcess.CreateFile("../../../Inputs/processos.csv");
+            String Buffer = Utils.ReadInputFile("../../../Inputs/processos.csv");
+            List<Process> listProcess = Utils.CsvToProcessList(Buffer);
 
             FirstFit(listProcess);
             BestFit(listProcess);
