@@ -115,7 +115,7 @@ namespace MMQuickFit.src
             var framesNeeded = process.RegL / this.FramesSize;
             framesNeeded = process.RegL % this.FramesSize > 0 ? framesNeeded + 1 : framesNeeded;
             Frame frame;
-            
+
             try
             {
                 if(this.Frames[index].Process != null)
@@ -171,7 +171,10 @@ namespace MMQuickFit.src
                     indexToReturn++;
                 }
                 if (indexToReturn == framesNeeded)
+                {
+                    pProcess.TimeToFindIndex = i;
                     return auxIndex;
+                }
             }
             return -1;
         }
@@ -183,8 +186,8 @@ namespace MMQuickFit.src
 
             Dictionary<int, int> mapEmptyFrames = new Dictionary<int, int>();
             int emptyFrames = 0, auxIndex = 0;
-
-            for (int i = 0; i < this.Frames.Count; ++i)
+            int i = 0;
+            for (i = 0; i < this.Frames.Count; ++i)
             { 
                 if (this.Frames[i].Process != null)
                     emptyFrames = 0;
@@ -198,13 +201,17 @@ namespace MMQuickFit.src
                 {
                     mapEmptyFrames.Add(auxIndex, emptyFrames);
                     if (emptyFrames == framesNeeded)
+                    {
+                        pProcess.TimeToFindIndex = i;
                         return auxIndex;
+                    }
                 }
             }
             if (mapEmptyFrames.Count(w => w.Value >= framesNeeded) == 0)
                 return -1;
 
             var bestFit = mapEmptyFrames.Where(w=>w.Value >= framesNeeded).OrderBy(o => o.Value).FirstOrDefault();
+            pProcess.TimeToFindIndex = i; 
             return bestFit.Key;
         }
 
@@ -215,8 +222,8 @@ namespace MMQuickFit.src
 
             Dictionary<int, int> mapEmptyFrames = new Dictionary<int, int>();
             int emptyFrames = 0, auxIndex = 0;
-
-            for (int i = 0; i < this.Frames.Count; ++i)
+            int i = 0;
+            for (i = 0; i < this.Frames.Count; ++i)
             {
                 if (this.Frames[i].Process != null)
                     emptyFrames = 0;
@@ -234,13 +241,32 @@ namespace MMQuickFit.src
                 return -1;
 
             var worstFit = mapEmptyFrames.Where(w => w.Value >= framesNeeded).OrderByDescending(o => o.Value).FirstOrDefault();
+            pProcess.TimeToFindIndex = i;
             return worstFit.Key;
+        }
+
+        public int QuickFitInsertion(Process pProcess, List<KeyValuePair<long, long>> mappedMemory, Dictionary<long, bool> allRegB)
+        {
+            var framesNeeded = pProcess.RegL / this.FramesSize;
+            framesNeeded = pProcess.RegL % this.FramesSize > 0 ? framesNeeded + 1 : framesNeeded;
+
+            if (!mappedMemory.Any(a => a.Value >= framesNeeded))
+                return -1;
+
+            var placeToInsert = mappedMemory.Where(w => w.Value >= framesNeeded).FirstOrDefault().Key;
+            var auxRegb = placeToInsert;
+
+            for (long usedFrames = 1; usedFrames <= framesNeeded; usedFrames++, auxRegb += FramesSize)
+                allRegB[auxRegb] = true;
+
+            pProcess.TimeToFindIndex = 0;
+            return Convert.ToInt32(placeToInsert);
         }
 
         public void PrintMemory() {
             List<Frame> listToPrint = new List<Frame>();
             listToPrint.AddRange(this.Frames);
-            listToPrint.Reverse();
+            //listToPrint.Reverse();
 
             Console.WriteLine("--------------MEMORY-------------------\n");
             foreach (var frame in listToPrint)

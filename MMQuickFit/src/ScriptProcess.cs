@@ -12,10 +12,10 @@ public class ScriptProcess
 
     public Dictionary<long, bool> AllRegBase { get; set; }
 
-    public ScriptProcess(long mS , long fZ, Dictionary<long, bool> allRegB = null)
+    public ScriptProcess(long mS , long fZ, Dictionary<long, bool> allRegB = null, int sR = 5)
 	{
         memoryS = mS;
-        sizeRandom = 5;
+        sizeRandom = sR;
         FramesSize = fZ;
         AllRegBase = allRegB;
     }

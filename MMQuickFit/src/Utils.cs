@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -38,27 +39,54 @@ namespace MMQuickFit.src
                     int regL = Int32.Parse(splitData[2]);
 
                     Process _process = new Process(name, regB, regL);
-
-                    processListToReturn.Add(_process);
+                    if(!processListToReturn.Any(a=>a.Name.Equals(_process.Name)))
+                        processListToReturn.Add(_process);
                 }
             }
 
             return processListToReturn;
         }
 
+        public static void AddTimeProcessTaked(Stopwatch stopwatch, string name,string outputPath = "../../../Outputs/timeTaked")
+        {
+            var line = name + " = " + stopwatch.ElapsedMilliseconds.ToString() + " milliseconds.";
+            File.WriteAllText(@outputPath + name + ".txt" , line);
+        }
+
         public static void ProcessListToCsv(List<Frame> framesList, string outputPath = "../../../Outputs/outputData.csv")
         {
             var line = string.Empty;
 
-            framesList = framesList.Where(w => w.Process != null).ToList();
-
             if (framesList == null)
                 throw new Exception();
 
+            var auxFrameName = string.Empty;
+            long auxFrameRegL = 0;
             foreach (var frame in framesList)
             {
-                var process = frame.Process;
-                line += process.Name + ";" + process.RegB + ";" + process.RegL + "\r\n";
+                if (frame.Process != null)
+                {
+                    auxFrameRegL = auxFrameName.Equals(frame.Process.Name) ? auxFrameRegL : 0;
+                    var regL = frame.Process.RegL;
+                    if (auxFrameName.Equals(frame.Process.Name))
+                    {
+                        regL = frame.Process.RegL - auxFrameRegL;
+
+                        if (frame.Process.RegL > Memory.FrameSize && regL > Memory.FrameSize)
+                            regL = Memory.FrameSize;
+                    }
+                    else
+                    {
+                        if (frame.Process.RegL > Memory.FrameSize)
+                            regL = Memory.FrameSize;
+                    }
+                    line += frame.Process.Name + ";" + frame.RegB + ";" + regL + ";" + frame.Process.TimeToFindIndex + "\r\n";
+
+                    auxFrameName = frame.Process.Name;
+                    auxFrameRegL += regL;
+                }
+                else
+                    line += "L" + ";" + frame.RegB + ";" + 0 + ";" + 0 + "\r\n";
             }
             File.WriteAllText(@outputPath, line);
         }
