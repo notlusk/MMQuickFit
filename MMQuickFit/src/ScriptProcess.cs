@@ -12,7 +12,7 @@ public class ScriptProcess
 
     public Dictionary<long, bool> AllRegBase { get; set; }
 
-    public ScriptProcess(long mS , long fZ, Dictionary<long, bool> allRegB = null, int sR = 5)
+    public ScriptProcess(long mS , long fZ, Dictionary<long, bool> allRegB = null, int sR = 50)
 	{
         memoryS = mS;
         sizeRandom = sR;
@@ -38,7 +38,7 @@ public class ScriptProcess
                 }
                 else
                 {
-                    if (regBaseValid >= framesNeeded)
+                    if (regBaseValid >= framesNeeded && !firstIndexValid.Equals(-1))
                     {
                         for (long i = firstIndexValid; i <= firstIndexValid + (this.FramesSize * (regBaseValid - framesNeeded)); i += this.FramesSize)
                         {
@@ -89,13 +89,19 @@ public class ScriptProcess
 
         for (int i = 0; regLimite.Count < sizeRandom; i++)
         {
+            long regValor = 0;
+            do
+            {
+                regValor = p.Next((Convert.ToInt32(this.memoryS) / this.sizeRandom));
 
-            long regValor = p.Next( ( Convert.ToInt32(this.memoryS) / 3) );
+            } while (regValor.Equals(0));
 
             if (!regLimite.Contains(regValor))
+            {
                 regLimite.Add(regValor);
+                this.memoryS = this.memoryS - regLimite[regLimite.Count - 1];
+            }
 
-            this.memoryS = this.memoryS - regLimite[i];
         }
 
         process.Sort();

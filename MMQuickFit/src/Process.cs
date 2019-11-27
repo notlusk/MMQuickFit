@@ -9,9 +9,9 @@ namespace MMQuickFit
         public string Name { get; set; }
         public long RegB { get; set; }
         public long RegL { get; set; }
-        public int TimeToFindIndex { get; set; }
+        public double TimeToFindIndex { get; set; }
 
-        public Process(string n, long rb, long rl, int time = 0) {
+        public Process(string n, long rb, long rl, long time = 0) {
             Name = n;
             RegB = rb;
             RegL = rl;

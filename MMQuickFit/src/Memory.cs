@@ -17,7 +17,7 @@ namespace MMQuickFit.src
 
     public class Memory
     {
-        public static long MemorySize = 25 * Utils.IntPow(2, 10);
+        public static long MemorySize = 2500 * Utils.IntPow(2, 10);
         public static long FrameSize = 1 * Utils.IntPow(2, 10);
 
         private Memory GetOriginalMemory 
@@ -172,7 +172,7 @@ namespace MMQuickFit.src
                 }
                 if (indexToReturn == framesNeeded)
                 {
-                    pProcess.TimeToFindIndex = i;
+                    //pProcess.TimeToFindIndex = i;
                     return auxIndex;
                 }
             }

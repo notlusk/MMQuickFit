@@ -1,6 +1,7 @@
 ﻿using MMQuickFit.src;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace MMQuickFit
@@ -16,14 +17,14 @@ namespace MMQuickFit
                 allRegBase.Add(memorySize, false);
             }
             Console.WriteLine();
-            var scriptProcessMemory = new ScriptProcess(Memory.MemorySize/4, Memory.FrameSize, allRegBase);
+            var scriptProcessMemory = new ScriptProcess(Memory.MemorySize, Memory.FrameSize, allRegBase);
             scriptProcessMemory.CreateFile("../../../Inputs/data.csv", "M");
             var orignalMemory = new Memory();
 
             orignalMemory.PrintMemory();
 
             Console.WriteLine();
-            var scriptProcess = new ScriptProcess(orignalMemory.Size/3, orignalMemory.FramesSize, null, 8);
+            var scriptProcess = new ScriptProcess(orignalMemory.Size, orignalMemory.FramesSize, null, 500);
             scriptProcess.CreateFile("../../../Inputs/processos.csv");
             String Buffer = Utils.ReadInputFile("../../../Inputs/processos.csv");
             List<Process> listProcess = Utils.CsvToProcessList(Buffer);
@@ -38,12 +39,17 @@ namespace MMQuickFit
         
         public static void FirstFit(List<Process> processList)
         {
+            
             var firstFitMemory = new Memory(); 
             foreach (var process in processList)
             {
-                firstFitMemory.InsertProcess(firstFitMemory.FirstFitInsertion(process), process);
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+                var index = firstFitMemory.FirstFitInsertion(process);
+                process.TimeToFindIndex = stopwatch.Elapsed.TotalMilliseconds;
+                firstFitMemory.InsertProcess(index, process);
+                stopwatch.Stop();
             }
-
             Console.WriteLine("--------------FIRST FIT----------------\n");
             firstFitMemory.PrintMemory();
 
@@ -56,7 +62,12 @@ namespace MMQuickFit
 
             foreach (var process in processList)
             {
-                bestFitMemory.InsertProcess(bestFitMemory.BestFitInsertion(process), process);
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+                var index = bestFitMemory.BestFitInsertion(process);
+                process.TimeToFindIndex = stopwatch.Elapsed.TotalMilliseconds;
+                bestFitMemory.InsertProcess(index, process);
+                stopwatch.Stop();
             }
 
             Console.WriteLine("---------------BEST FIT----------------\n");
@@ -71,7 +82,12 @@ namespace MMQuickFit
 
             foreach (var process in processList)
             {
-                worstFitMemory.InsertProcess(worstFitMemory.WorstFitInsertion(process), process);
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+                var index = worstFitMemory.WorstFitInsertion(process);
+                process.TimeToFindIndex = stopwatch.Elapsed.TotalMilliseconds;
+                worstFitMemory.InsertProcess(index, process);
+                stopwatch.Stop();
             }
 
             Console.WriteLine("--------------WORST FIT----------------\n");
@@ -87,6 +103,8 @@ namespace MMQuickFit
             thisMemoryMappedRegB = allRegBase;
             foreach (var process in processList)
             {
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
                 var mappedRoles = new Dictionary<long, long>(); //RegBase, EmptyValues
 
                 long firstIndex = -1;
@@ -111,7 +129,9 @@ namespace MMQuickFit
                 var regBaseToInsert = quickFitMemory.QuickFitInsertion(process, listOfMappedRoles, thisMemoryMappedRegB);
                 var frameToInsert = quickFitMemory.Frames.Where(w => w.RegB == regBaseToInsert).FirstOrDefault();
                 var index = quickFitMemory.Frames.IndexOf(frameToInsert);
-                quickFitMemory.InsertProcess(index, process); 
+                process.TimeToFindIndex = stopwatch.Elapsed.TotalMilliseconds;
+                quickFitMemory.InsertProcess(index, process);
+                stopwatch.Stop();
             }
 
             Console.WriteLine("--------------QUICK FIT----------------\n");
